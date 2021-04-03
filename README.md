@@ -4,7 +4,8 @@ The main current goal of the project development of Universal General Representa
 For replacement dissimilar internal api of rust analyzer. 
 
 ### Motivation 
-
+You may notice that the project is similar to a graph database. 
+In general, it is so. Ok, but why we need new graph database? 
 
 ### Development agreements
 

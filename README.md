@@ -3,6 +3,13 @@
 The main current goal of the project development of Universal General Representation. 
 For replacement dissimilar internal api of rust analyzer. 
 
+### Build 
+First, install and build MLIR following the [instruction](https://mlir.llvm.org/getting_started/). 
+Next, set env vars that containing path to libs and call cargo  
+```
+export LLVM_DIR=/home/mrsmith/Desktop/code_experiments/llvm-project/build/lib/cmake/llvm/ MLIR_DIR=/home/mrsmith/Desktop/code_experiments/llvm-project/build/lib/cmake/mlir/ & cargo run
+```
+
 ### Motivation 
 You may notice that the project is similar to a graph database. 
 In general, it is so. Ok, but why we need new graph database? 

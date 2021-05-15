@@ -11,4 +11,5 @@ build = "build.rs"
 cpp = "0.5"
 
 [build-dependencies]
-cpp_build = "0.5"
+cmake = "0.1"
+cpp_build = { path = "cpp_build" }

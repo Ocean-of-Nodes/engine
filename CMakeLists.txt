@@ -39,19 +39,31 @@ include_directories(${MLIR_INCLUDE_DIRS})
 link_directories(${LLVM_BUILD_LIBRARY_DIR})
 add_definitions(${LLVM_DEFINITIONS})
 
+get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
+get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
+get_property(translation_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
 set(LIBS
-  MLIRAnalysis
-  MLIRCallInterfaces
-  MLIRCastInterfaces
-  MLIRExecutionEngine
-  MLIRIR
-  MLIRLLVMToLLVMIRTranslation
-  MLIRParser
-  MLIRPass
-  MLIRSideEffectInterfaces
-  MLIRTargetLLVMIRExport
-  MLIRTransforms
-)
+        ${dialect_libs}
+        ${conversion_libs}
+        ${translation_libs}
+        MLIRAnalysis
+        MLIRCallInterfaces
+        MLIRExecutionEngine
+        MLIRIR
+        MLIRLLVMIR
+        MLIRParser
+        MLIRPass
+        MLIRSideEffectInterfaces
+        MLIRSupport
+        MLIRTargetLLVMIRExport
+        MLIRTransforms
+        MLIROptLib
+        MLIRHello
+        )
+message(STATUS "MLIR_ALL_LIBS: ${dialect_libs}")
+add_llvm_library(rust_cpp_generated "/home/mrsmith/Desktop/code_experiments/engine/target/debug/build/engine-4cd3ae83113637c8/out/rust_cpp/cpp_closures.cpp")
 
-add_library(rust_cpp_generated STATIC "/home/mrsmith/Desktop/code_experiments/engine/target/debug/build/engine-d2a8f32969f2c3da/out/rust_cpp/cpp_closures.cpp")
+llvm_update_compile_flags(rust_cpp_generated)
 target_link_libraries(rust_cpp_generated PRIVATE ${LIBS})
+
+mlir_check_all_link_libraries(rust_cpp_generated)

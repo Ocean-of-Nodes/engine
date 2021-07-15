@@ -42,6 +42,7 @@ cpp! {{
     #include "mlir/IR/OpDefinition.h"
     #include "mlir/IR/BuiltinTypes.h"
     #include "mlir/IR/AsmState.h"
+    #include "mlir/IR/Builders.h"
 
     #include "mlir/Support/LogicalResult.h"
     #include "mlir/Support/TypeID.h"
@@ -56,15 +57,11 @@ cpp! {{
     class MMADTDialect : public mlir::Dialect {
     public:
         explicit MMADTDialect(mlir::MLIRContext *ctx): mlir::Dialect("mmadt", ctx, mlir::TypeID::get<MMADTDialect>()) {
-
+            addOperations<RepeatOp>();
         }
 
         static  llvm::StringRef getDialectNamespace() {
             return "mmadt";
-        }
-
-        void initialize() {
-            addOperations<RepeatOp>();
         }
     };
 
@@ -84,9 +81,9 @@ cpp! {{
 
         static void build(
             mlir::OpBuilder &builder,
-            mlir::OperationState &state,
-            mlir::Type result,
-            mlir::DenseElementsAttr value
+            mlir::OperationState &state
+            // mlir::Type result,
+            // mlir::DenseElementsAttr value
         ) {
             // mlir::OpBuilder::create<ConstantOp>(...);
         }
@@ -141,7 +138,6 @@ trait Instructions = IntoIterator<Item = Instruction>;
 /// Implements of a simple MLIR emission.
 cpp! {{
     struct MLIRGen {
-        mlir::MLIRContext context;
         mlir::ModuleOp module;
     };
 }}
@@ -151,37 +147,40 @@ impl MLIRGen {
     fn new() -> Self {
         unsafe {
             cpp!([] -> MLIRGen as "MLIRGen" {
-                mlir::MLIRContext context;
-                context.getOrLoadDialect<MMADTDialect>();
-                mlir::OpBuilder builder{context};
+                auto context = new mlir::MLIRContext;
+                context->loadDialect<MMADTDialect>();
+                mlir::OpBuilder builder(context);
                 auto module = mlir::ModuleOp::create(builder.getUnknownLoc());
 
+                module.push_back(builder.create<RepeatOp>(builder.getUnknownLoc()));
                 // mlir::OwningModuleRef module;
                 // if (int error = runJit(module)) {
                 //     std::cout << "error: " << error << std::endl;
                 // }
 
                 // std::cout << "Hello, 1212" << std::endl;
-                return MLIRGen{context, module};
+                return MLIRGen{module};
             })
         }
     }
 
     // Translate `mmadt`
     fn translate(&mut self, insts: impl Instructions) {
-        for inst in insts {}
+        for inst in insts {
+
+        }
     }
 
-    fn dump(&self) {
+    fn dump(&self) { 
         unsafe {
-            cpp!([mut self as "MLIRGen"] {
-                return self.module.dump();
+            cpp!([self as "MLIRGen*"] {
+                self->module.dump();
             })
         }
     }
 }
 
 fn main() {
-    let gen = MLIRGen::new();
+    let mut gen = MLIRGen::new();
     gen.dump();
 }
